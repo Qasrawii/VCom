@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "469419712980",
+    "project_id": "vcom-363c0",
+    "storage_bucket": "vcom-363c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469419712980:android:12da5d93c358b93536f641",
+        "android_client_info": {
+          "package_name": "com.vcom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469419712980-hekf24k85f7os8k011iare1qrs543jph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx7nA0CFdUDgkDrfTT0jcEcGNQUW3ADHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469419712980-hekf24k85f7os8k011iare1qrs543jph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
