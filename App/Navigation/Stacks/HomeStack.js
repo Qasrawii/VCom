@@ -34,12 +34,14 @@ const HomeStackScreen = ({ navigation, route }) => {
                 }
             })} />
 
-            <HomeStack.Screen name="CompanyScreen" component={CompanyScreen} options={({ navigation }) => ({
+            <HomeStack.Screen name="CompanyScreen" component={CompanyScreen} options={({ navigation,route }) => ({
                 headerShown: true,
+                title:route.params.item.name
 
             })} />
-            <HomeStack.Screen name="CategoryScreen" component={CategoryScreen} options={({ navigation }) => ({
+            <HomeStack.Screen name="CategoryScreen" component={CategoryScreen} options={({ navigation,route }) => ({
                 headerShown: true,
+                title:route.params.categoryName
 
             })} />
             <HomeStack.Screen name="ChatScreen" component={ChatScreen} options={({ navigation }) => ({

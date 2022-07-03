@@ -11,12 +11,25 @@ import CompanyScreen from '../../Screens/Company/CompanyScreen'
 import CategoryScreen from '../../Screens/Category/CategoryScreen';
 import ChatListScreen from '../../Screens/Chat/ChatListScreen';
 import ChatScreen from '../../Screens/Chat/ChatScreen';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 const ChatStack = createStackNavigator();
 
 const ChatStackScreen = ({ navigation, route }) => {
 
     const { width, height } = useDimensions().window
+    const navName = getFocusedRouteNameFromRoute(route);
 
+    useLayoutEffect(() => {
+        switch (navName) {
+            case "ChatScreen":
+                navigation.setOptions({ tabBarVisible: false });
+                break;
+            default:
+                navigation.setOptions({ tabBarVisible: true });
+
+        }
+        return;
+    }, [navigation, route]);
     return (
         <ChatStack.Navigator screenOptions={{
         }}>

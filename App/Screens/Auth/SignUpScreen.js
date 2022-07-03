@@ -104,18 +104,31 @@ const SignUpScreen = ({ navigation }) => {
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {
                     alert('That email address is already in use!');
+                    setPage(1)
                 }
                 if (error.code === 'auth/invalid-email') {
                     alert('That email address is invalid!');
+                    setPage(1)
                 }
                 console.error(error);
             })
     }
 
+ 
+    useEffect(() => {
+        setUserAccount()
+      }, [company]);
+    
+      const setUserAccount = async () => {
+        if (company != undefined) {
+          await AsyncStorage.setItem("user", JSON.stringify(company))
+          navigation.replace("ProfileScreen")
+        }
+    
+      }
     const createCompany = () => {
 
-        if(company.name==""||company.bio==""||company.address==""||company.category==""||company.phoneNumber==""||company.webSite==""||company.email==""||company.services.length==0)
-        {
+        if (company.name == "" || company.phoneNumber == "" || company.email == "") {
             alert("please fill out all required fields")
             return
         }
@@ -123,9 +136,11 @@ const SignUpScreen = ({ navigation }) => {
             .collection('companies')
             .doc(auth().currentUser._user.uid)
             .set(company)
-            .then(() => {
-                navigation.navigate("ProfileScreen")
-            });
+            .then(async () => {
+                console.log('User account created & signed in!');
+                const Company = await firestore().collection('companies').doc(await auth().currentUser._user.uid)
+                  .onSnapshot(documentSnapshot => setCompany(documentSnapshot.data()))
+    })
     }
 
     const addService = () => {
@@ -207,7 +222,7 @@ const SignUpScreen = ({ navigation }) => {
                         </Text>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 16, color: colors.black, marginTop: 15 }}>
-                        Do you have an account? <Text style={{ fontSize: 16, color: colors.primary, fontWeight: 'bold' }}>Sign in</Text>
+                        Do you have an account? <Text onPress={() => navigation.replace("SignInScreen")} style={{ fontSize: 16, color: colors.primary, fontWeight: 'bold' }}>Sign in</Text>
                     </Text>
                 </View>
 

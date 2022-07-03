@@ -1,63 +1,105 @@
+import React, { useCallback, useState, useLayoutEffect, useEffect } from 'react';
+import { GiftedChat } from 'react-native-gifted-chat';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import database from '@react-native-firebase/database';
 
-import { Icon, FlatList, Input } from 'native-base';
-import React, { useEffect } from 'react';
-import {
-    Text,
-    useColorScheme,
-    View,
-} from 'react-native';
-import { useDimensions } from '@react-native-community/hooks'
-import colors from '../../Assets/colors';
-const ChatScreen = ({ navigation }) => {
-    const isDarkMode = useColorScheme() === 'dark';
-    const { width, height } = useDimensions().window
-    const arr = [
-        1, 2, 2, 2, 2
-    ]
-
-
-
+const ChatScreen = ({ navigation, route }) => {
+    const [messages, setMessages] = useState([]);
+    const userId = auth().currentUser._user.uid
+    const resId = route.params?.resId
+    const resEmail = route.params?.email
     useEffect(() => {
+        database()
+            .ref(`/chats${userId + resId}`)
+            .orderByChild('createdAt', 'desc')
+            .on("child_added", snap => {
+                let data = snap.val();
+                setMessages(prev => (GiftedChat.append(prev, data)));
+            });
 
 
     }, [])
 
 
-    return (
-        <View showsVerticalScrollIndicator={false} style={{ backgroundColor: colors.f2,flex:1}}>
-          
-            <View style={{flex:1}} >
-            <View style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
-                <Text style={{ color: colors.black, fontSize: 17, backgroundColor: colors.lightGrey, margin: 10, padding: 15, borderBottomRightRadius: 20, borderTopRightRadius: 20, borderBottomLeftRadius: 20 }} >
-                    hi
-                </Text>
-            </View>
+    useEffect(() => {
+        console.log('route.params', route.params)
+        start()
+        handleStart()
 
-            <View style={{ justifyContent: 'center', alignItems: 'flex-end' }}>
-                <Text style={{ color: colors.white, fontSize: 17, backgroundColor: colors.primary, margin: 10, padding: 15, borderTopLeftRadius: 20, borderTopRightRadius: 20, borderBottomLeftRadius: 20 }} >
-                    hi
-                </Text>
-            </View>
+    }, [])
+
+
+
+    const start = () => {
+        const subscriber = firestore()
+            .collection('chatList').doc(userId)
+            .onSnapshot(documentSnapshot => {
+                handleStart(documentSnapshot.data());
+            });
+
+    }
+
+    const handleStart = (arr) => {
+        if (arr == undefined) {
+            let tmp = {
+                arr: [{
+                    id: resId,
+                    name: route.params?.name
+                }]
+            }
+            firestore()
+                .collection('chatList')
+                .doc(userId)
+                .set(tmp)
             
+        return 
+        }
+        let tmp = arr.arr
+        for (var key in tmp) {
+            if (tmp[key].id == resId) {
+               
+                return
+            }
+
+        }
 
 
 
-            </View>
+        let tmpArr = arr.arr
+        tmpArr.push({
+            id: resId,
+            name: route.params?.name
+        })
+        let result = {
+            arr: tmpArr
+        }
+        firestore()
+            .collection('chatList')
+            .doc(userId)
+            .set(result)
 
-            <View style={{backgroundColor:colors.white,marginHorizontal:10,borderRadius:20,marginBottom:10}}>
-                <Input
-                w={{ base: "100%" }}
-                    InputRightElement={
-                        <Text style={{color:colors.primary,fontSize:15,paddingHorizontal:10}}>Send</Text>
-                    }
-                    placeholder="Message..."
-                    variant="rounded" />
-            </View>
 
-        </View>
+    }
+
+
+    const onSend = (messages = []) => {
+        database()
+            .ref(`/chats${userId + resId}`)
+            .push(messages[0])
+    }
+
+    return (
+        <GiftedChat
+            messages={messages}
+            showAvatarForEveryMessage={false}
+            onSend={messages => onSend(messages)}
+            user={{
+                _id: userId,
+                name: auth().currentUser._user.email,
+            }}
+        />
     );
-};
-
-
+}
 
 export default ChatScreen;

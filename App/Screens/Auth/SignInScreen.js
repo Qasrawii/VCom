@@ -18,39 +18,44 @@ import Carousel from 'react-native-snap-carousel';
 import CompanyCard from '../../Components/Card/CompanyCard';
 import auth, { firebase } from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignInScreen = ({ navigation }) => {
   const isDarkMode = useColorScheme() === 'dark';
   const [show, setShow] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [company, setCompany] = useState(undefined)
   const { width, height } = useDimensions().window
-  const arr = [
-    1, 2, 2, 2, 2
-  ]
+
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const login = () => {
-    if(email!=''&&password!='')
-   {
-    console.log('auth', auth().currentUser)
-    auth()
-    .signInWithEmailAndPassword(email, password)
-    .then(() => {
-      console.log('User account created & signed in!');
-    })
-    .then(()=>navigation.navigate("ProfileScreen"))
-    .catch(error => {
-      if (error.code === 'auth/email-already-in-use') {
-        alert('That email address is already in use!');
-      }
-      if (error.code === 'auth/invalid-email') {
-        alert('That email address is invalid!');
-      }
-      console.error(error);
-    })
-   }
+    if (email != '' && password.length >= 8) {
+      console.log('auth', auth().currentUser)
+      auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(async () => {
+          console.log('User account created & signed in!');
+          const Company = await firestore().collection('companies').doc(await auth().currentUser._user.uid)
+            .onSnapshot(documentSnapshot => setCompany(documentSnapshot.data()))
+
+
+
+
+        })
+
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            alert('That email address is already in use!');
+          }
+          if (error.code === 'auth/invalid-email') {
+            alert('That email address is invalid!');
+          }
+          console.error(error);
+        })
+    }
   }
 
 
@@ -65,6 +70,21 @@ const SignInScreen = ({ navigation }) => {
   }, []);
 
 
+  useEffect(() => {
+    setUserAccount()
+  }, [company]);
+
+  const setUserAccount = async () => {
+    if (company != undefined) {
+      await AsyncStorage.setItem("user", JSON.stringify(company))
+      navigation.replace("ProfileScreen")
+    }
+
+  }
+
+
+
+
   return (
     <View showsVerticalScrollIndicator={false} style={{ backgroundColor: colors.primary20, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
@@ -76,6 +96,7 @@ const SignInScreen = ({ navigation }) => {
           source={require('../../Assets/logo.jpg')}
           style={{ width: width * 0.60, height: 50, marginVertical: 30 }}
           resizeMode={'contain'}
+          alt="s"
         />
 
         <View style={{ paddingVertical: 10 }}>
@@ -112,7 +133,7 @@ const SignInScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <Text style={{ fontSize: 16, color: colors.black, marginTop: 15 }}>
-          Don't have an account? <Text onPress={()=>navigation.replace("SignUpScreen")} style={{ fontSize: 16, color: colors.primary, fontWeight: 'bold' }}>Sign Up</Text>
+          Don't have an account? <Text onPress={() => navigation.replace("SignUpScreen")} style={{ fontSize: 16, color: colors.primary, fontWeight: 'bold' }}>Sign Up</Text>
         </Text>
 
 

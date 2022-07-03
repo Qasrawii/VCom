@@ -13,6 +13,8 @@ import ProfileScreen from '../../Screens/Profile/ProfileScreen';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import SignInScreen from '../../Screens/Auth/SignInScreen';
 import SignUpScreen from '../../Screens/Auth/SignUpScreen';
+import SignUpScreenUser from '../../Screens/Auth/SignUpScreenUser';
+import SignInScreenUser from '../../Screens/Auth/SignInScreenUser';
 const ProfileStack = createStackNavigator();
 
 const ProfileStackScreen = ({ navigation, route }) => {
@@ -28,6 +30,12 @@ const ProfileStackScreen = ({ navigation, route }) => {
             case "SignUpScreen":
                 navigation.setOptions({ tabBarVisible: false });
                 break;
+            case "SignUpScreenUser":
+                navigation.setOptions({ tabBarVisible: false });
+                break;
+            case "SignInScreenUser":
+                navigation.setOptions({ tabBarVisible: false });
+                break;
             default:
                 navigation.setOptions({ tabBarVisible: true });
 
@@ -40,6 +48,7 @@ const ProfileStackScreen = ({ navigation, route }) => {
 
             <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen} options={({ navigation }) => ({
                 headerShown: true,
+                
 
             })} />
             <ProfileStack.Screen name="SignInScreen" component={SignInScreen} options={({ navigation }) => ({
@@ -47,6 +56,14 @@ const ProfileStackScreen = ({ navigation, route }) => {
 
             })} />
             <ProfileStack.Screen name="SignUpScreen" component={SignUpScreen} options={({ navigation }) => ({
+                headerShown: false,
+
+            })} />
+            <ProfileStack.Screen name="SignUpScreenUser" component={SignUpScreenUser} options={({ navigation }) => ({
+                headerShown: false,
+
+            })} />
+            <ProfileStack.Screen name="SignInScreenUser" component={SignInScreenUser} options={({ navigation }) => ({
                 headerShown: false,
 
             })} />

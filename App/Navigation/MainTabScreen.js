@@ -71,7 +71,7 @@ const MainTabScreen = () => {
         })}
       />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="NotificationTap"
         component={NotificationStack}
         options={({ route, navigation }) => ({
@@ -84,7 +84,7 @@ const MainTabScreen = () => {
           keyboardShown: false,
           hasCounter: false
         })}
-      />
+      /> */}
 
       <Tabs.Screen
         name="ProfileTap"

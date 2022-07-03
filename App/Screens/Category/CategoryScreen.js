@@ -1,6 +1,6 @@
 
 import { Icon, FlatList } from 'native-base';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -15,37 +15,52 @@ import { useDimensions } from '@react-native-community/hooks'
 import colors from '../../Assets/colors';
 import Carousel from 'react-native-snap-carousel';
 import CompanyCard from '../../Components/Card/CompanyCard';
-const CategoryScreen = ({ navigation }) => {
+import firestore from '@react-native-firebase/firestore';
+
+const CategoryScreen = ({ navigation,route }) => {
   const isDarkMode = useColorScheme() === 'dark';
   const { width, height } = useDimensions().window
-  const arr = [
-    1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-  ]
+  const [companies, setCompanies] = useState([])
+  const categoryName = route.params.categoryName
 
 
+useEffect(() => {
+
+}, [])
 
   useEffect(() => {
+    const subscriber = firestore()
+      .collection('companies')
+      .where('category', '==', categoryName)
+      .onSnapshot(querySnapshot => {
+        const companies = [];
 
+        querySnapshot?.forEach(documentSnapshot => {
+          companies.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
 
-  }, [])
-
+        setCompanies(companies);
+      });
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: colors.primary20 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <FlatList data={arr}
-          showsVerticalScrollIndicator={false}
+      <FlatList data={companies}
+          horizontal
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) =>
             <CompanyCard
-              companyName={"Company Name"}
-              companyBio={"companyBio"}
-              companyRate={"5"}
-              style={{backgroundColor:colors.white}}
-              onPress={()=>navigation.navigate("CompanyScreen")}
+              companyName={item.name}
+              companyRate={item.rate}
+              onPress={() => navigation.navigate("CompanyScreen",{item})}
             />
           }
-          horizontal={false}
-          numColumns={2}
           keyExtractor={item => item.id} />
 
 

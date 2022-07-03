@@ -11,6 +11,7 @@ import CompanyScreen from '../../Screens/Company/CompanyScreen'
 import CategoryScreen from '../../Screens/Category/CategoryScreen';
 import SearchScreen from '../../Screens/Search/SearchScreen';
 import ChatScreen from '../../Screens/Chat/ChatScreen';
+import Search from '../../Screens/Search/Search';
 
 const SearchStack = createStackNavigator();
 
@@ -21,28 +22,30 @@ const SearchStackScreen = ({ navigation, route }) => {
     return (
         <SearchStack.Navigator screenOptions={{
         }}>
-         
+
             <SearchStack.Screen name="SearchScreen" component={SearchScreen} options={({ navigation }) => ({
-                headerShown: true,
-                header: () => {
-                    return (
-                        <View style={{ alignItems: 'center', paddingVertical: 10, backgroundColor: colors.white }}>
-                            <TouchableOpacity onPress={()=>null} style={{flexDirection:'row',alignItems:'center',paddingVertical:10,paddingHorizontal:20,backgroundColor:colors.f2,minWidth:width*.9,borderRadius:25}}>
-                            <Icon as={FontAwesome5} name="search" mr="5" color={colors.grey} size={4} />
-                            <Text style={{fontSize:16,color:colors.grey,}}   >
-                                Sreach...
-                            </Text>
-                            </TouchableOpacity>
-                        </View>
-                    )
-                }
+                headerShown: false,
+
+            })} />
+            <SearchStack.Screen name="Search" component={Search} options={({ navigation }) => ({
+                headerShown: false,
+
             })} />
             <SearchStack.Screen name="ChatScreen" component={ChatScreen} options={({ navigation }) => ({
                 headerShown: true,
 
 
             })} />
+            <SearchStack.Screen name="CompanyScreen" component={CompanyScreen} options={({ navigation ,route }) => ({
+                headerShown: true,
+                title:route.params.item.name
 
+
+            })} />
+            <SearchStack.Screen name="CategoryScreen" component={CategoryScreen} options={({ navigation,route }) => ({
+                headerShown: true,
+                title:route.params.categoryName
+            })} />
 
 
 
